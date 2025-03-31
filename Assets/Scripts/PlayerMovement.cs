@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jumping")]
     public float jumpForce;
+    public int maxJumps;
+    private int jumpsRemaining;
 
     [Header("Ground Check")]
     public Transform groundCheckPos;
@@ -17,7 +19,6 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;
 
     private Animator animator;
-
 
     void Awake()
     {
@@ -43,16 +44,17 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump()
     {
-        if(isGrounded())
+        if(jumpsRemaining > 0)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            jumpsRemaining--;
         }
     }
     //if key not pressed, vel = 0
     //if key pressed, vel = certain number
     void FixedUpdate()
     {
-
+        isGrounded();
         if(!isXMovementKeyPressed())
         {
             x_movement = 0f;
@@ -60,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(x_movement * x_speed, rb.linearVelocity.y);
         animator.SetFloat("xVelocity", Mathf.Abs(rb.linearVelocity.x));
         animator.SetFloat("yVelocity", rb.linearVelocity.y);
-        animator.SetBool("isJumping", !isGrounded());
+        animator.SetBool("isJumping", jumpsRemaining != 2);
         FlipPlayer();
     }
 
@@ -70,13 +72,14 @@ public class PlayerMovement : MonoBehaviour
                 Keyboard.current.dKey.isPressed;
     }
 
-    private bool isGrounded()
+    private void isGrounded()
     {
-        if(Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0, groundLayer))
+        //Check if drawn Gizmos (under player feet) is overlapping with ground object
+        bool grounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0, groundLayer);
+        if(grounded && rb.linearVelocity.y < 0)
         {
-            return true;
+            jumpsRemaining = maxJumps;
         }
-        return false;
     }
 
     private void FlipPlayer()
@@ -91,6 +94,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    //Draws Gizmos box
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.white;
