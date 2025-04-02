@@ -5,14 +5,12 @@ public class Fireball : MonoBehaviour
     public float speed = 20f;
     public float damage;
     private Rigidbody2D rb;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.linearVelocity = transform.right * speed;
     }
 
-    void OnTriggerEnter2D(Collider2D hitInfo)
+    private void OnTriggerEnter2D(Collider2D hitInfo)
     {
         if(hitInfo.gameObject.tag == "Enemy")
         {
@@ -20,9 +18,15 @@ public class Fireball : MonoBehaviour
             Enemy enemy = hitInfo.GetComponent<Enemy>();
             enemy.TakeDamage(damage);
         }
+
         if(hitInfo.name != "Player")
         {
             Destroy(gameObject);
         }
+    }
+
+    public void SetDirection(Vector3 direction)
+    {
+        rb.linearVelocity = direction * speed;
     }
 }
