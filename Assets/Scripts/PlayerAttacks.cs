@@ -12,17 +12,14 @@ public class PlayerAttacks : MonoBehaviour
     public void OnSpecialAttack()
     {
         //Gets mouse position
-        Vector3 mousePosition = mousePositionAction.action.ReadValue<Vector2>();
+        Vector3 mouseScreenPosition = mousePositionAction.action.ReadValue<Vector2>();
+        //Convert mouse position from screen position to world position. 
+        //Note: camera z is -10, which is different from 0. This causes normalization to be skewed
+        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(
+            new Vector3(mouseScreenPosition.x, mouseScreenPosition.y, -Camera.main.transform.position.z)
+            );
         //Gets the direction we are trying to shoot. .normalized minimizes each direction to 1
-        direction = (mousePosition - firePoint.position).normalized;
-        // if(GetComponent<SpriteRenderer>().flipX == true)
-        // {
-        //     firePoint.rotation = Quaternion.Euler(0f, 0f, 180f);
-        // }
-        // else
-        // {
-        //     firePoint.rotation = Quaternion.Euler(0f, 0f, 0f);
-        // }
+        direction = (mouseWorldPosition - firePoint.position).normalized;
         //Creates the fireball game object and creates a reference to the fireball script
         GameObject fireball = Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
         Fireball fireballScript = fireball.GetComponent<Fireball>();
