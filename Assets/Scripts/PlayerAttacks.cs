@@ -21,7 +21,7 @@ public class PlayerAttacks : MonoBehaviour
         //Gets the direction we are trying to shoot. .normalized minimizes each direction to 1
         direction = (mouseWorldPosition - firePoint.position).normalized;
         //Creates the fireball game object and creates a reference to the fireball script
-        GameObject fireball = Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
+        GameObject fireball = Instantiate(fireballPrefab, firePoint.position, Quaternion.Euler(direction));//firePoint.rotation);
         Fireball fireballScript = fireball.GetComponent<Fireball>();
         //Sets the direction of the fireball script
         fireballScript.SetDirection(direction);
