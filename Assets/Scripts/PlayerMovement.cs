@@ -32,9 +32,6 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-    }
 
     public void OnMovement(InputValue value)
     {
@@ -52,27 +49,29 @@ public class PlayerMovement : MonoBehaviour
     }
     //if key not pressed, vel = 0
     //if key pressed, vel = certain number
-    void FixedUpdate()
+    private void Update()
     {
-        isGrounded();
-        if(!isXMovementKeyPressed())
+        if(!IsXMovementKeyPressed())
         {
             x_movement = 0f;
         }
-        rb.linearVelocity = new Vector2(x_movement * x_speed, rb.linearVelocity.y);
+        FlipPlayer();
         animator.SetFloat("xVelocity", Mathf.Abs(rb.linearVelocity.x));
         animator.SetFloat("yVelocity", rb.linearVelocity.y);
         animator.SetBool("isJumping", jumpsRemaining != 2);
-        FlipPlayer();
     }
-
-    private bool isXMovementKeyPressed()
+    void FixedUpdate()
+    {
+        IsGrounded();
+        rb.linearVelocity = new Vector2(x_movement * x_speed, rb.linearVelocity.y);
+    }
+    private bool IsXMovementKeyPressed()
     {
         return  Keyboard.current.aKey.isPressed || 
                 Keyboard.current.dKey.isPressed;
     }
 
-    private void isGrounded()
+    private void IsGrounded()
     {
         //Check if drawn Gizmos (under player feet) is overlapping with ground object
         bool grounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0, groundLayer);

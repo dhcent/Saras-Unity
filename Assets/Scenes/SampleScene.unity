@@ -311,7 +311,23 @@ MonoBehaviour:
   m_ControlsChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_ActionEvents: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c4c11d4c-4840-4805-8641-5f0a49f0ef1a
+    m_ActionName: 'Gameplay/Movement[/Keyboard/a,/Keyboard/d]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cf220083-a13b-40a8-bb89-cbc99ce5c761
+    m_ActionName: 'Gameplay/Jump[/Keyboard/w,/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1c3f0230-35a0-4d3b-9e3f-d898d2ee3b55
+    m_ActionName: 'Gameplay/SpecialAttack[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cd3d5c08-e9a9-4d42-a7a2-c0574d5e3c4f
+    m_ActionName: 'Gameplay/MousePosition[/Mouse/position]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Gameplay
