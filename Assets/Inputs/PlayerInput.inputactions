@@ -42,12 +42,12 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "jomp",
+                    "name": "MeleeAttack",
                     "type": "Button",
-                    "id": "35fd87ac-afc2-4a07-b025-72cff364d0b8",
+                    "id": "a3097cbd-d344-4932-83f6-17f60ab8c9f4",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Hold",
+                    "interactions": "",
                     "initialStateCheck": false
                 }
             ],
@@ -131,12 +131,23 @@
                 },
                 {
                     "name": "",
-                    "id": "fe731934-1ad2-40e5-bf36-262fc8b967d1",
-                    "path": "",
+                    "id": "85f0caac-f5dd-4c73-942f-cef4e62d7248",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "jomp",
+                    "action": "MeleeAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "132abecf-d48b-42db-bc49-ab747b0ed436",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MeleeAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

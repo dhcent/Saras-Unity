@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Ground Check")]
     public Transform groundCheckPos;
-    public Vector2 groundCheckSize = new Vector2(0.5f, 0.5f);
+    public Vector2 groundCheckSize = new Vector2(2f, 0.5f);
     public LayerMask groundLayer;
 
     private Animator animator;
@@ -33,28 +33,25 @@ public class PlayerMovement : MonoBehaviour
 
     // Update is called once per frame
 
-    public void OnMovement(InputValue value)
+    public void Movement(InputAction.CallbackContext context)
     {
-
-        x_movement = value.Get<float>();
+        x_movement = context.ReadValue<float>();
     }
 
-    public void OnJump()
+    public void Jump(InputAction.CallbackContext context)
     {
-        if(jumpsRemaining > 0)
+        if(context.performed)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            jumpsRemaining--;
+            if(jumpsRemaining > 0)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                jumpsRemaining--;
+            }   
         }
     }
-    //if key not pressed, vel = 0
-    //if key pressed, vel = certain number
+
     private void Update()
     {
-        if(!IsXMovementKeyPressed())
-        {
-            x_movement = 0f;
-        }
         FlipPlayer();
         animator.SetFloat("xVelocity", Mathf.Abs(rb.linearVelocity.x));
         animator.SetFloat("yVelocity", rb.linearVelocity.y);
@@ -64,11 +61,6 @@ public class PlayerMovement : MonoBehaviour
     {
         IsGrounded();
         rb.linearVelocity = new Vector2(x_movement * x_speed, rb.linearVelocity.y);
-    }
-    private bool IsXMovementKeyPressed()
-    {
-        return  Keyboard.current.aKey.isPressed || 
-                Keyboard.current.dKey.isPressed;
     }
 
     private void IsGrounded()
