@@ -1,12 +1,17 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    public float x_speed;
-    private float x_movement;
+    public float x_MovementForce;
+    public float x_max_speed;
+    private float x_direction;
     private Rigidbody2D rb;
+    public float kFriction;
+
 
     [Header("Jumping")]
     public float jumpForce;
@@ -15,64 +20,62 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Ground Check")]
     public Transform groundCheckPos;
-    public Vector2 groundCheckSize = new Vector2(0.5f, 0.5f);
+    public Vector2 groundCheckSize = new Vector2(2f, 0.5f);
     public LayerMask groundLayer;
-
-    private Animator animator;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-    public void OnMovement(InputValue value)
-    {
-
-        x_movement = value.Get<float>();
-    }
-
-    public void OnJump()
-    {
-        if(jumpsRemaining > 0)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            jumpsRemaining--;
-        }
-    }
-    //if key not pressed, vel = 0
-    //if key pressed, vel = certain number
     void FixedUpdate()
     {
-        isGrounded();
-        if(!isXMovementKeyPressed())
+        rb.AddForce(new Vector2(x_direction * x_MovementForce, 0));
+        if(Mathf.Abs(rb.linearVelocity.x) > x_max_speed)
         {
-            x_movement = 0f;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x > 0 ? x_max_speed : -x_max_speed, rb.linearVelocity.y);
         }
-        rb.linearVelocity = new Vector2(x_movement * x_speed, rb.linearVelocity.y);
-        animator.SetFloat("xVelocity", Mathf.Abs(rb.linearVelocity.x));
-        animator.SetFloat("yVelocity", rb.linearVelocity.y);
-        animator.SetBool("isJumping", jumpsRemaining != 2);
-        FlipPlayer();
+    
+        ApplyFriction();
     }
 
-    private bool isXMovementKeyPressed()
+    public void Movement(InputAction.CallbackContext context)
     {
-        return  Keyboard.current.aKey.isPressed || 
-                Keyboard.current.dKey.isPressed;
+        x_direction = context.ReadValue<float>();
     }
 
-    private void isGrounded()
+    public void Jump(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            if(jumpsRemaining > 0)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                jumpsRemaining--;
+            }   
+        }
+    }
+
+    private void ApplyFriction()
+    {
+        if (Mathf.Abs(rb.linearVelocity.x) > 0.05f)
+        {
+            if (rb.linearVelocity.x > 0)
+            {
+                rb.AddForce(Vector2.left * kFriction);
+            }
+            else if (rb.linearVelocity.x < 0)
+            {
+                rb.AddForce(Vector2.right * kFriction);
+            }
+        }
+        else
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y); // Directly set velocity to zero within the dead zone
+        }
+    }
+
+    public bool IsGrounded()
     {
         //Check if drawn Gizmos (under player feet) is overlapping with ground object
         bool grounded = Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0, groundLayer);
@@ -80,18 +83,7 @@ public class PlayerMovement : MonoBehaviour
         {
             jumpsRemaining = maxJumps;
         }
-    }
-
-    private void FlipPlayer()
-    {
-        if(rb.linearVelocity.x < 0)
-        {
-            GetComponent<SpriteRenderer>().flipX = true;
-        }
-        else if (rb.linearVelocity.x > 0)
-        {
-            GetComponent<SpriteRenderer>().flipX = false;
-        }
+        return grounded;
     }
 
     //Draws Gizmos box
